@@ -1,0 +1,67 @@
+<project default="all" basedir="../">
+
+	<property name="src" location="src"/>
+	<property name="src.java" location="${src}/java"/>
+	<property name="src.assets" location="${src}/assets"/>
+	<property name="src.sample" location="${src}/sample"/>
+
+	<property name="build" location="build"/>
+	<property name="build.java" location="${build}/java"/>
+
+	<property name="dist" location="dist"/>
+
+	<target name="all" depends="dist"/>
+
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="init">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+		
+	<target name="compile" depends="init">
+		
+		<mkdir dir="${build.java}"/>
+		
+		<javac
+			srcdir="${src.java}"
+			destdir="${build.java}"
+			debug="true">
+		</javac>
+		
+		<copy todir="${build.java}">
+			<fileset dir="${src.java}">
+				<include name="**/*"/>				
+				<exclude name="**/*.java"/>				
+			</fileset>
+		</copy>
+
+	</target>
+		
+	<target name="dist" depends="compile">
+		
+		<jar jarfile="${dist}/simcir.jar" manifest="${src.assets}/MANIFEST.MF">
+			<fileset dir="${build.java}">
+				<include name="**/*"/>				
+			</fileset>
+		</jar>
+
+		<zip zipfile="${dist}/simcir.zip">
+			<zipfileset dir="${src.assets}">
+				<include name="README.txt"/>
+				<include name="*.html"/>
+			</zipfileset>
+			<zipfileset dir="${dist}">
+				<include name="simcir.jar"/>
+			</zipfileset>
+			<zipfileset dir="${src.sample}" prefix="sample">
+				<include name="**/*"/>
+			</zipfileset>
+		</zip>
+
+	</target>
+
+</project>
